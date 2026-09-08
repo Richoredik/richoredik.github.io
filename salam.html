@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>richored — Инвестиции и пассивный доход</title>
+<style>
+  :root{
+    --primary:#2563eb;
+    --primary-dark:#1d4ed8;
+    --secondary:#06b6d4;
+    --accent:#8b5cf6;
+    --bg:#f8fafc;
+    --surface:#ffffff;
+    --text:#1e293b;
+    --text-light:#64748b;
+    --border:#e2e8f0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+  .container{max-width:1200px;margin:0 auto;padding:0 24px}
+
+  /* NAV */
+  header{
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+    position:sticky;
+    top:0;
+    z-index:50;
+  }
+  .nav{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:20px 0;
+  }
+  .logo{
+    font-size:28px;
+    font-weight:800;
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  nav ul{display:flex;gap:32px;list-style:none}
+  nav a{
+    color:var(--text-light);
+    text-decoration:none;
+    font-weight:500;
+    transition:color .2s;
+  }
+  nav a:hover{color:var(--primary)}
+  .btn{
+    padding:12px 28px;
+    border-radius:8px;
+    font-weight:600;
+    cursor:pointer;
+    border:none;
+    text-decoration:none;
+    display:inline-block;
+    transition:all .2s;
+  }
+  .btn-primary{
+    background:var(--primary);
+    color:white;
+    box-shadow:0 4px 14px rgba(37,99,235,.3);
+  }
+  .btn-primary:hover{
+    background:var(--primary-dark);
+    transform:translateY(-2px);
+    box-shadow:0 6px 20px rgba(37,99,235,.4);
+  }
+  .btn-outline{
+    background:transparent;
+    color:var(--primary);
+    border:2px solid var(--primary);
+  }
+  .btn-outline:hover{
+    background:var(--primary);
+    color:white;
+  }
+
+  /* HERO */
+  .hero{
+    padding:120px 0 80px;
+    background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+    color:white;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .hero-content{
+    position:relative;
+    z-index:1;
+    max-width:700px;
+  }
+  .badge{
+    display:inline-block;
+    padding:8px 16px;
+    background:rgba(255,255,255,.2);
+    border-radius:20px;
+    font-size:14px;
+    margin-bottom:24px;
+    backdrop-filter:blur(10px);
+  }
+  .hero h1{
+    font-size:clamp(40px,6vw,64px);
+    font-weight:800;
+    line-height:1.1;
+    margin-bottom:24px;
+  }
+  .hero p{
+    font-size:20px;
+    opacity:.95;
+    margin-bottom:40px;
+    line-height:1.6;
+  }
+  .hero-cta{display:flex;gap:16px;flex-wrap:wrap}
+  
+  .hero-stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:24px;
+    margin-top:80px;
+    position:relative;
+    z-index:1;
+  }
+  .hero-stat{
+    background:rgba(255,255,255,.1);
+    backdrop-filter:blur(10px);
+    padding:24px;
+    border-radius:16px;
+    border:1px solid rgba(255,255,255,.2);
+    text-align:center;
+  }
+  .hero-stat .num{
+    font-size:36px;
+    font-weight:800;
+    margin-bottom:8px;
+  }
+  .hero-stat .label{
+    font-size:14px;
+    opacity:.9;
+  }
+
+  /* SECTIONS */
+  section{padding:100px 0}
+  .section-header{
+    text-align:center;
+    margin-bottom:60px;
+  }
+  .section-header h2{
+    font-size:40px;
+    font-weight:800;
+    margin-bottom:16px;
+    color:var(--text);
+  }
+  .section-header p{
+    font-size:18px;
+    color:var(--text-light);
+    max-width:600px;
+    margin:0 auto;
+  }
+
+  /* CARDS */
+  .features{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:32px;
+  }
+  .feature-card{
+    background:var(--surface);
+    padding:40px;
+    border-radius:20px;
+    border:1px solid var(--border);
+    transition:all .3s;
+    position:relative;
+    overflow:hidden;
+  }
+  .feature-card::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:4px;
+    background:linear-gradient(90deg,var(--primary),var(--secondary));
+    transform:scaleX(0);
+    transition:transform .3s;
+  }
+  .feature-card:hover{
+    transform:translateY(-8px);
+    box-shadow:0 20px 40px rgba(0,0,0,.1);
+  }
+  .feature-card:hover::before{
+    transform:scaleX(1);
+  }
+  .feature-icon{
+    width:60px;
+    height:60px;
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    border-radius:16px;
+    display:grid;
+    place-items:center;
+    font-size:28px;
+    margin-bottom:24px;
+  }
+  .feature-card h3{
+    font-size:22px;
+    margin-bottom:12px;
+    font-weight:700;
+  }
+  .feature-card p{
+    color:var(--text-light);
+    line-height:1.6;
+  }
+
+  /* STRATEGIES */
+  .strategies-section{
+    background:var(--surface);
+  }
+  .strategies-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:32px;
+  }
+  .strategy-card{
+    background:var(--bg);
+    border:2px solid var(--border);
+    border-radius:24px;
+    padding:40px;
+    position:relative;
+    transition:all .3s;
+  }
+  .strategy-card.featured{
+    border-color:var(--primary);
+    background:linear-gradient(135deg,rgba(37,99,235,.05),rgba(6,182,212,.05));
+    transform:scale(1.05);
+  }
+  .strategy-card:hover{
+    border-color:var(--primary);
+    transform:translateY(-8px);
+    box-shadow:0 20px 40px rgba(37,99,235,.15);
+  }
+  .strategy-card.featured:hover{
+    transform:scale(1.05) translateY(-8px);
+  }
+  .strategy-badge{
+    position:absolute;
+    top:-12px;
+    left:50%;
+    transform:translateX(-50%);
+    background:var(--primary);
+    color:white;
+    padding:6px 20px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:700;
+    text-transform:uppercase;
+  }
+  .strategy-card h3{
+    font-size:24px;
+    margin:20px 0 12px;
+    text-align:center;
+  }
+  .strategy-return{
+    text-align:center;
+    font-size:48px;
+    font-weight:800;
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    margin:20px 0;
+  }
+  .strategy-card ul{
+    list-style:none;
+    margin:24px 0;
+  }
+  .strategy-card li{
+    padding:10px 0;
+    padding-left:32px;
+    position:relative;
+    color:var(--text-light);
+  }
+  .strategy-card li::before{
+    content:"✓";
+    position:absolute;
+    left:0;
+    color:var(--primary);
+    font-weight:700;
+  }
+
+  /* CALCULATOR */
+  .calc-container{
+    background:var(--surface);
+    border-radius:32px;
+    padding:60px;
+    box-shadow:0 20px 60px rgba(0,0,0,.08);
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:60px;
+    align-items:center;
+  }
+  .calc-inputs{
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+  }
+  .input-group label{
+    display:block;
+    font-weight:600;
+    margin-bottom:8px;
+    color:var(--text);
+  }
+  .input-group input{
+    width:100%;
+    padding:16px;
+    border:2px solid var(--border);
+    border-radius:12px;
+    font-size:16px;
+    transition:border-color .2s;
+  }
+  .input-group input:focus{
+    outline:none;
+    border-color:var(--primary);
+  }
+  .calc-output{
+    background:linear-gradient(135deg,var(--primary),var(--secondary));
+    padding:48px;
+    border-radius:24px;
+    color:white;
+    text-align:center;
+  }
+  .calc-output .label{
+    font-size:14px;
+    opacity:.9;
+    margin-bottom:12px;
+  }
+  .calc-output .value{
+    font-size:56px;
+    font-weight:800;
+    margin-bottom:24px;
+  }
+  .calc-details{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+    margin-top:32px;
+    padding-top:32px;
+    border-top:1px solid rgba(255,255,255,.2);
+  }
+  .calc-details .item{
+    text-align:center;
+  }
+  .calc-details .item .label{
+    font-size:12px;
+    opacity:.8;
+    margin-bottom:4px;
+  }
+  .calc-details .item .value{
+    font-size:24px;
+    font-weight:700;
+  }
+
+  /* FAQ */
+  .faq-list{
+    max-width:800px;
+    margin:0 auto;
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+  }
+  .faq-item{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:16px;
+    overflow:hidden;
+    transition:all .3s;
+  }
+  .faq-item:hover{
+    box-shadow:0 8px 24px rgba(0,0,0,.06);
+  }
+  .faq-question{
+    padding:24px 32px;
+    cursor:pointer;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    font-weight:600;
+    font-size:16px;
+  }
+  .faq-question::after{
+    content:"▼";
+    font-size:12px;
+    transition:transform .3s;
+    color:var(--primary);
+  }
+  .faq-item.active .faq-question::after{
+    transform:rotate(180deg);
+  }
+  .faq-answer{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .3s;
+    padding:0 32px;
+    color:var(--text-light);
+  }
+  .faq-item.active .faq-answer{
+    max-height:300px;
+    padding-bottom:24px;
+  }
+
+  /* CTA */
+  .cta-section{
+    background:linear-gradient(135deg,var(--primary),var(--accent));
+    padding:100px 0;
+    text-align:center;
+    color:white;
+    position:relative;
+    overflow:hidden;
+  }
+  .cta-section::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 108c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+  }
+  .cta-content{
+    position:relative;
+    z-index:1;
+    max-width:700px;
+    margin:0 auto;
+  }
+  .cta-section h2{
+    font-size:48px;
+    font-weight:800;
+    margin-bottom:20px;
+  }
+  .cta-section p{
+    font-size:20px;
+    opacity:.95;
+    margin-bottom:40px;
+  }
+  .cta-section .btn{
+    background:white;
+    color:var(--primary);
+    font-size:18px;
+    padding:18px 48px;
+  }
+  .cta-section .btn:hover{
+    transform:translateY(-4px);
+    box-shadow:0 12px 32px rgba(0,0,0,.2);
+  }
+
+  /* IMAGE SECTION */
+  .image-section{
+    padding:0 0 100px;
+  }
+  .image-container{
+    border-radius:32px;
+    overflow:hidden;
+    box-shadow:0 30px 80px rgba(0,0,0,.15);
+    position:relative;
+  }
+  .image-container img{
+    width:100%;
+    height:600px;
+    object-fit:cover;
+    display:block;
+  }
+  .image-caption{
+    position:absolute;
+    bottom:0;
+    left:0;
+    right:0;
+    padding:48px;
+    background:linear-gradient(to top,rgba(0,0,0,.8),transparent);
+    color:white;
+  }
+  .image-caption h3{
+    font-size:36px;
+    font-weight:700;
+    margin-bottom:12px;
+  }
+  .image-caption p{
+    font-size:18px;
+    opacity:.9;
+  }
+
+  /* FOOTER */
+  footer{
+    background:var(--text);
+    color:white;
+    padding:60px 0 40px;
+  }
+  .footer-content{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:32px;
+  }
+  .footer-logo{
+    font-size:28px;
+    font-weight:800;
+    background:linear-gradient(135deg,var(--secondary),var(--accent));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+  .socials{
+    display:flex;
+    gap:16px;
+  }
+  .socials a{
+    width:44px;
+    height:44px;
+    border-radius:12px;
+    background:rgba(255,255,255,.1);
+    display:grid;
+    place-items:center;
+    color:white;
+    text-decoration:none;
+    transition:all .2s;
+  }
+  .socials a:hover{
+    background:var(--primary);
+    transform:translateY(-4px);
+  }
+  .copyright{
+    width:100%;
+    text-align:center;
+    margin-top:40px;
+    padding-top:40px;
+    border-top:1px solid rgba(255,255,255,.1);
+    color:rgba(255,255,255,.6);
+    font-size:14px;
+  }
+
+  /* RESPONSIVE */
+  @media(max-width:968px){
+    .hero-stats{grid-template-columns:repeat(2,1fr)}
+    .features,.strategies-grid{grid-template-columns:1fr}
+    .calc-container{grid-template-columns:1fr;gap:40px;padding:40px}
+    .strategy-card.featured{transform:none}
+    .strategy-card.featured:hover{transform:translateY(-8px)}
+    nav ul{display:none}
+  }
+  @media(max-width:640px){
+    .hero-stats{grid-template-columns:1fr 1fr}
+    .hero h1{font-size:36px}
+    .calc-output .value{font-size:40px}
+    .image-container img{height:400px}
+    .image-caption{padding:32px}
+    .image-caption h3{font-size:24px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <div class="logo">richored</div>
+    <nav>
+      <ul>
+        <li><a href="#about">О платформе</a></li>
+        <li><a href="#strategies">Стратегии</a></li>
+        <li><a href="#calc">Калькулятор</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+    </nav>
+    <a href="#cta" class="btn btn-primary">Начать</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="badge">📈 Инвестиции будущего</div>
+      <h1>Заставь деньги работать на тебя</h1>
+      <p>Построй пассивный доход с помощью проверенных инвестиционных стратегий. Начни с любой суммы и создай финансовую свободу.</p>
+      <div class="hero-cta">
+        <a href="#calc" class="btn btn-primary" style="background:white;color:var(--primary)">Рассчитать доход</a>
+        <a href="#strategies" class="btn btn-outline" style="border-color:white;color:white">Стратегии</a>
+      </div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="num">18%+</div>
+        <div class="label">Годовая доходность</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">12 лет</div>
+        <div class="label">На рынке</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">2.5K+</div>
+        <div class="label">Инвесторов</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">₽500М</div>
+        <div class="label">Под управлением</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="container">
+    <div class="section-header">
+      <h2>Почему выбирают нас</h2>
+      <p>Мы создали платформу, которая делает инвестирование простым и доступным для каждого</p>
+    </div>
+    <div class="features">
+      <div class="feature-card">
+        <div class="feature-icon">💎</div>
+        <h3>Сложный процент</h3>
+        <p>Реинвестируй прибыль и наблюдай, как капитал растёт экспоненциально. Восьмое чудо света по версии Эйнштейна.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Минимум времени</h3>
+        <p>Правильно собранный портфель требует всего 1-2 часа в месяц. Остальное время живи своей жизнью.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3>Защита капитала</h3>
+        <p>Диверсификация между разными активами снижает риски и защищает от кризисов.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Прозрачность</h3>
+        <p>Отслеживай доходность в реальном времени. Полная аналитика и отчётность.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3>Целевое планирование</h3>
+        <p>Пенсия, дом, образование — под каждую цель своя стратегия накопления.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">👨‍</div>
+        <h3>Обучение</h3>
+        <p>Курсы от экспертов с реальным опытом. От новичка до продвинутого инвестора.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="strategies" class="strategies-section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Инвестиционные стратегии</h2>
+      <p>Выбери подход под свой уровень риска и финансовые цели</p>
+    </div>
+    <div class="strategies-grid">
+      <div class="strategy-card">
+        <h3>Консервативная</h3>
+        <div class="strategy-return">8-12%</div>
+        <ul>
+          <li>Облигации ОФЗ</li>
+          <li>Дивидендные акции</li>
+          <li>Депозиты</li>
+          <li>Низкий риск</li>
+        </ul>
+        <a href="#" class="btn btn-outline" style="width:100%;text-align:center">Подробнее</a>
+      </div>
+      <div class="strategy-card featured">
+        <div class="strategy-badge">Популярная</div>
+        <h3>Сбалансированная</h3>
+        <div class="strategy-return">15-20%</div>
+        <ul>
+          <li>Индексные фонды ETF</li>
+          <li>Голубые фишки</li>
+          <li>Корпоративные облигации</li>
+          <li>Средний риск</li>
+        </ul>
+        <a href="#" class="btn btn-primary" style="width:100%;text-align:center">Подробнее</a>
+      </div>
+      <div class="strategy-card">
+        <h3>Агрессивная</h3>
+        <div class="strategy-return">25-40%</div>
+        <ul>
+          <li>Ростовые акции</li>
+          <li>Криптовалюты</li>
+          <li>Венчурные инвестиции</li>
+          <li>Высокий риск</li>
+        </ul>
+        <a href="#" class="btn btn-outline" style="width:100%;text-align:center">Подробнее</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="calc">
+  <div class="container">
+    <div class="section-header">
+      <h2>Калькулятор дохода</h2>
+      <p>Узнай, каким будет твой капитал через несколько лет</p>
+    </div>
+    <div class="calc-container">
+      <div class="calc-inputs">
+        <div class="input-group">
+          <label>Начальный капитал (₽)</label>
+          <input type="number" id="capital" value="500000">
+        </div>
+        <div class="input-group">
+          <label>Ежемесячное пополнение (₽)</label>
+          <input type="number" id="monthly" value="30000">
+        </div>
+        <div class="input-group">
+          <label>Годовая доходность (%)</label>
+          <input type="number" id="rate" value="15" step="0.5">
+        </div>
+        <div class="input-group">
+          <label>Срок (лет)</label>
+          <input type="number" id="years" value="10" min="1" max="50">
+        </div>
+      </div>
+      <div class="calc-output">
+        <div class="label">Итоговый капитал</div>
+        <div class="value" id="total">0 ₽</div>
+        <div class="calc-details">
+          <div class="item">
+            <div class="label">Вложено</div>
+            <div class="value" id="invested">0 ₽</div>
+          </div>
+          <div class="item">
+            <div class="label">Заработано</div>
+            <div class="value" id="earned">0 ₽</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="container">
+    <div class="section-header">
+      <h2>Частые вопросы</h2>
+      <p>Всё, что нужно знать перед началом инвестирования</p>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-question">С какой суммы можно начать инвестировать?</div>
+        <div class="faq-answer"><p>С любой! Даже 1000 рублей в месяц через 20 лет превратятся в серьёзный капитал. Главное — регулярность и дисциплина.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Насколько это безопасно?</div>
+        <div class="faq-answer"><p>Любые инвестиции несут риск, но диверсификация и долгосрочный подход значительно снижают его. Мы учим управлять рисками.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Нужны ли специальные знания?</div>
+        <div class="faq-answer"><p>Нет, мы обучаем с нуля. Через 2 недели ты уже соберёшь свой первый портфель. Есть курсы для любого уровня.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Как оптимизировать налоги?</div>
+        <div class="faq-answer"><p>Используй ИИС (индивидуальный инвестиционный счёт) с налоговыми вычетами. Это до 52 000 рублей в год возврата.</p></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Что делать, если рынок упадёт?</div>
+        <div class="faq-answer"><p>Для долгосрочного инвестора это возможность купить дешевле. История показывает: рынок всегда восстанавливается.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="image-section">
+  <div class="container">
+    <div class="image-container">
+      <img src="https://blog.iteam.ru/wp-content/uploads/2025/10/461_n2390548_big-1140x570.jpg" alt="Investment">
+      <div class="image-caption">
+        <h3>Инвестируй в своё будущее</h3>
+        <p>Каждый день без инвестиций — это упущенная прибыль. Начни сегодня.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="cta" class="cta-section">
+  <div class="container">
+    <div class="cta-content">
+      <h2>Начни строить капитал сегодня</h2>
+      <p>Присоединяйся к 2500+ инвесторам, которые уже создают пассивный доход с richored</p>
+      <a href="#" class="btn">Получить доступ</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-logo">richored</div>
+      <div class="socials">
+        <a href="#">✈</a>
+        <a href="#">▶</a>
+        <a href="#">◎</a>
+        <a href="#">𝕏</a>
+      </div>
+      <div class="copyright">© 2026 richored. Все права защищены.</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Calculator
+  const inputs = {
+    capital: document.getElementById('capital'),
+    monthly: document.getElementById('monthly'),
+    rate: document.getElementById('rate'),
+    years: document.getElementById('years')
+  };
+  
+  function fmt(n){
+    return Math.round(n).toLocaleString('ru-RU') + ' ₽';
+  }
+  
+  function calc(){
+    const c = +inputs.capital.value || 0;
+    const m = +inputs.monthly.value || 0;
+    const r = +inputs.rate.value || 0;
+    const y = +inputs.years.value || 0;
+    
+    const monthlyRate = r / 100 / 12;
+    const months = y * 12;
+    const total = c * Math.pow(1 + monthlyRate, months) + m * (Math.pow(1 + monthlyRate, months) - 1) / monthlyRate;
+    const invested = c + m * months;
+    const earned = total - invested;
+    
+    document.getElementById('total').textContent = fmt(total);
+    document.getElementById('invested').textContent = fmt(invested);
+    document.getElementById('earned').textContent = fmt(earned);
+  }
+  
+  Object.values(inputs).forEach(input => {
+    input.addEventListener('input', calc);
+  });
+  
+  calc();
+  
+  // FAQ
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.querySelector('.faq-question').addEventListener('click', () => {
+      item.classList.toggle('active');
+    });
+  });
+</script>
+
+</body>
+</html>
